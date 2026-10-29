@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A premium, immersive music player featuring beautiful glassmorphism, responsive visualizer, dynamic audio effects, and custom audio uploads.">
+  <title>Harmonix - Premium Audio Experience</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Ambient background glowing circles -->
+  <div class="ambient-glow" id="ambientGlow"></div>
+  <div class="ambient-glow-secondary" id="ambientGlowSecondary"></div>
+
+  <div class="app-container">
+    <!-- Sidebar: Search, Playlist, Uploads -->
+    <aside class="sidebar-panel">
+      <div class="brand">
+        <svg class="brand-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+        <h1>Harmonix</h1>
+      </div>
+
+      <!-- Search Box -->
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search track, artist...">
+      </div>
+
+      <!-- Genre Tabs -->
+      <div class="genre-tabs" id="genreTabs">
+        <button class="genre-tab active" data-genre="all">All</button>
+        <button class="genre-tab" data-genre="synthwave">Synthwave</button>
+        <button class="genre-tab" data-genre="lofi">Lofi</button>
+        <button class="genre-tab" data-genre="ambient">Ambient</button>
+        <button class="genre-tab" data-genre="imported">Imported</button>
+      </div>
+
+      <!-- Playlist Container -->
+      <div class="playlist-section">
+        <div class="section-header">
+          <h2>Your Playlist</h2>
+          <span class="track-count" id="trackCount">0 tracks</span>
+        </div>
+        <div class="track-list" id="trackList">
+          <!-- Tracks will be dynamically injected here by JS -->
+        </div>
+      </div>
+
+      <!-- Drag & Drop Upload Zone -->
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" multiple accept="audio/*" class="file-input-hidden">
+        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <div class="upload-text">
+          <span class="upload-highlight">Import local tracks</span>
+          <p class="upload-sub">Drag & drop or click to browse</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area: Player & FX controls -->
+    <main class="player-main">
+      <div class="player-content-wrapper">
+        <!-- Visualizer & Album Art Pane -->
+        <div class="visualizer-pane">
+          <!-- Canvas Visualizer Background -->
+          <canvas class="visualizer-canvas" id="visualizerCanvas"></canvas>
+
+          <!-- Core Player Card -->
+          <div class="player-card">
+            <!-- Album Art Box -->
+            <div class="album-art-container">
+              <div class="vinyl-record" id="vinylRecord">
+                <div class="vinyl-center"></div>
+                <img id="albumArtImage" src="" alt="Album Artwork">
+              </div>
+            </div>
+
+            <!-- Song Info -->
+            <div class="track-info">
+              <h2 class="track-title" id="trackTitle">Select a track</h2>
+              <p class="track-artist" id="trackArtist">No artist info</p>
+              <div class="track-tag" id="trackGenreTag">System</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audio FX & Visualizer Style controls -->
+        <div class="effects-panel">
+          <div class="panel-title-wrapper">
+            <h3>Sound & Display Laboratory</h3>
+            <p>Customize your acoustic environment</p>
+          </div>
+
+          <div class="effects-grid">
+            <!-- Bass Boost -->
+            <div class="effect-card" id="bassBoostCard">
+              <div class="effect-meta">
+                <span class="effect-name">BASS BOOST</span>
+                <span class="effect-status" id="bassBoostStatus">OFF</span>
+              </div>
+              <button class="effect-toggle-btn" id="bassBoostBtn" aria-label="Toggle Bass Boost">
+                <span class="indicator-dot"></span>
+              </button>
+            </div>
+
+            <!-- Space Reverb -->
+            <div class="effect-card" id="reverbCard">
+              <div class="effect-meta">
+                <span class="effect-name">SPACE REVERB</span>
+                <span class="effect-status" id="reverbStatus">OFF</span>
+              </div>
+              <button class="effect-toggle-btn" id="reverbBtn" aria-label="Toggle Space Reverb">
+                <span class="indicator-dot"></span>
+              </button>
+            </div>
+
+            <!-- Procedural Synth Mode -->
+            <div class="effect-card" id="synthCard">
+              <div class="effect-meta">
+                <span class="effect-name">SYNTH BEAT</span>
+                <span class="effect-status" id="synthStatus">OFF</span>
+              </div>
+              <button class="effect-toggle-btn" id="synthBtn" aria-label="Toggle Procedural Synth Mode">
+                <span class="indicator-dot"></span>
+              </button>
+            </div>
+
+            <!-- Visualizer Styles -->
+            <div class="visualizer-control-card">
+              <span class="card-label">VISUALIZER STYLE</span>
+              <div class="viz-modes">
+                <button class="viz-mode-btn active" data-viz="circular">Circular Glow</button>
+                <button class="viz-mode-btn" data-viz="bars">Frequency Bars</button>
+                <button class="viz-mode-btn" data-viz="waveform">Fluid Waveform</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Playback Navigation & Timers Bar -->
+        <div class="controls-panel">
+          <!-- Timers and Progress Bar -->
+          <div class="progress-section">
+            <span class="time-display" id="currentTime">0:00</span>
+            <div class="progress-bar-container" id="progressBarContainer">
+              <div class="progress-bar-track"></div>
+              <div class="progress-bar-fill" id="progressBarFill"></div>
+              <div class="progress-bar-handle" id="progressBarHandle"></div>
+              <div class="progress-hover-tooltip" id="progressTooltip">0:00</div>
+            </div>
+            <span class="time-display" id="durationTime">0:00</span>
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div class="buttons-bar">
+            <!-- Shuffle -->
+            <button class="control-btn" id="shuffleBtn" title="Shuffle Tracks">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 3 21 3 21 8"></polyline>
+                <line x1="4" y1="20" x2="21" y2="3"></line>
+                <polyline points="21 16 21 21 16 21"></polyline>
+                <line x1="15" y1="15" x2="21" y2="21"></line>
+                <line x1="4" y1="4" x2="9" y2="9"></line>
+              </svg>
+            </button>
+
+            <!-- Previous -->
+            <button class="control-btn" id="prevBtn" title="Previous Track">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                <line x1="5" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+              </svg>
+            </button>
+
+            <!-- Play / Pause -->
+            <button class="play-btn" id="playPauseBtn" title="Play / Pause">
+              <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <svg id="pauseIcon" class="hidden" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+              </svg>
+            </button>
+
+            <!-- Next -->
+            <button class="control-btn" id="nextBtn" title="Next Track">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+              </svg>
+            </button>
+
+            <!-- Repeat -->
+            <button class="control-btn" id="repeatBtn" title="Repeat Track(s)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="17 1 21 5 17 9"></polyline>
+                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                <polyline points="7 23 3 19 7 15"></polyline>
+                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+              </svg>
+              <span class="repeat-badge" id="repeatBadge">1</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="control-divider"></div>
+
+            <!-- Volume section -->
+            <div class="volume-container">
+              <button class="control-btn" id="muteBtn" title="Mute/Unmute">
+                <!-- Volume High -->
+                <svg id="volumeHighIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <!-- Mute -->
+                <svg id="volumeMuteIcon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <line x1="23" y1="9" x2="17" y2="15"></line>
+                  <line x1="17" y1="9" x2="23" y2="15"></line>
+                </svg>
+              </button>
+              <div class="volume-slider-wrapper">
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+                <div class="volume-slider-fill" id="volumeSliderFill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast">Track added successfully</div>
+
+  <!-- Hidden native audio element -->
+  <audio id="audioElement" crossorigin="anonymous"></audio>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
